@@ -28,3 +28,19 @@ variable "key_name" {
   default     = "sirikeypair"
 }
 
+variable "role_name" {
+  description = "The name of the IAM role"
+  type        = string
+  default     = "my-iam-role"
+}
+
+variable "policy_arns" {
+  description = "A list of IAM policy ARNs to attach to the role"
+  type        = list(string)
+  default     = []
+}
+
+variable "security_group_id" {
+  description = "The source security group allowed to reach the EC2 security group"
+  type        = string
+}

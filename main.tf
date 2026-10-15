@@ -12,8 +12,25 @@ module "s3" {
 module "ec2" {
   source = "./modules/ec2"
 
-  ami_id        = var.ami_id
-  instance_type = var.instance_type
-  key_name      = var.key_name
-  environment   = var.environment
+  ami_id               = var.ami_id
+  instance_type        = var.instance_type
+  key_name             = var.key_name
+  environment          = var.environment
+  security_group_id    = module.ec2_security_group.security_group_id
+  iam_instance_profile = module.ec2_role.instance_profile_name
+}
+
+module "ec2_role" {
+  source = "./modules/iam/ec2_role"
+
+  role_name   = var.role_name
+  environment = var.environment
+  policy_arns = var.policy_arns
+
+}
+
+module "ec2_security_group" {
+  source = "./modules/vpc"
+
+  security_group_id = var.security_group_id
 }
