@@ -17,3 +17,13 @@ variable "environment" {
   description = "The environment for the EC2 instance"
   type        = string
 }
+
+variable "iam_instance_profile" {
+  description = "The IAM instance profile to associate with the EC2 instance"
+  type        = string
+}
+
+variable "security_group_id" {
+  description = "The security group ID for the EC2 instance"
+  type        = string
+}

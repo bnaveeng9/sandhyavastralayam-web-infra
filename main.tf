@@ -12,8 +12,50 @@ module "s3" {
 module "ec2" {
   source = "./modules/ec2"
 
-  ami_id        = var.ami_id
-  instance_type = var.instance_type
-  key_name      = var.key_name
-  environment   = var.environment
+  ami_id               = var.ami_id
+  instance_type        = var.instance_type
+  key_name             = var.key_name
+  environment          = var.environment
+  security_group_id    = module.ec2_security_group.security_group_id
+  iam_instance_profile = module.ec2_role.instance_profile_name
 }
+
+module "ec2_role" {
+  source = "./modules/iam/ec2_role"
+
+  role_name   = var.role_name
+  environment = var.environment
+  policy_arns = var.policy_arns
+
+}
+
+module "ec2_security_group" {
+  source = "./modules/vpc"
+
+  security_group_id = var.security_group_id
+}
+
+module "lambda_container" {
+  source = "./modules/lambda_container"
+
+  function_name    = var.lambda_function_name
+  lambda_image_uri = var.lambda_image_uri
+  environment      = var.environment
+  architecture     = var.lambda_architecture
+}
+
+removed {
+  from = module.lambda_container.aws_ecr_repository.this
+
+  lifecycle {
+    destroy = false
+  }
+}
+
+# module "gateway_api" {
+#   source = "./modules/gateway_api"
+
+#   api_name            = var.gateway_api_name
+#   function_name       = module.lambda_container.function_name
+#   function_invoke_arn = module.lambda_container.function_invoke_arn
+# }
